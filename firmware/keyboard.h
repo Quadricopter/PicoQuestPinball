@@ -5,12 +5,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifndef BLUETOOTH_REPORT_LEN
-#define BLUETOOTH_REPORT_LEN    6
-#endif /*BLUETOOTH_REPORT_LEN*/
+#include "hid_keyboard_demo.h"
 
-#define MAX_SIMULTANEOUS_KEY    BLUETOOTH_REPORT_LEN
-#define TRIM_KEY
+#define MAX_SIMULTANEOUS_KEY    (HID_REPORT_SIZE - 2)
+#define TRIM_KEY_LEFT
 
 typedef struct {
 
@@ -31,6 +29,6 @@ bool    Keyboard_hasChanged(t_keyboard *);
 void    Keyboard_dump(t_keyboard *);
 
 void    Keyboard_setKeyTable(t_keyboard *, const uint8_t *keytable, size_t keytable_size);
-void    Keyboard_getHIDReportPayload(t_keyboard *, uint8_t *report, size_t report_size);
+void    Keyboard_getHIDReportPayload(t_keyboard *, uint8_t *report);
 
 #endif /*__KEYBOARD_H__*/

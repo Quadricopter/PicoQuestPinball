@@ -229,15 +229,11 @@ const uint8_t *get_keytable_us_none(size_t *size)
     return NULL;
 }
 
-void send_report_array(int modifier, uint8_t *keycode_array)
+void send_hid_report(uint8_t *hid_report)
 {
-    uint8_t message[] = {0xa1, REPORT_ID, modifier, 0, keycode_array[0],
-                                                       keycode_array[1],
-                                                       keycode_array[2],
-                                                       keycode_array[3],
-                                                       keycode_array[4],
-                                                       keycode_array[5]};
+    uint8_t message[] = {0xA1, REPORT_ID, 0, 0, 0, 0, 0, 0, 0, 0};
 
+    memcpy(&message[2], hid_report, HID_REPORT_SIZE);
     hid_device_send_interrupt_message(hid_cid, &message[0], sizeof(message));
 }
 

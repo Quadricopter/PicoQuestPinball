@@ -18,7 +18,6 @@ int main(void)
 {
     t_button    button;
     t_keyboard  keyboard;
-    uint8_t     report[BLUETOOTH_REPORT_LEN];
 
     /* Init Pico */
     stdio_init_all();
@@ -56,18 +55,18 @@ int main(void)
         Button_pool(&button, &keyboard);
         if (Keyboard_hasChanged(&keyboard)) {
 
-            uint8_t     report[BLUETOOTH_REPORT_LEN];
+            uint8_t     hid_report[HID_REPORT_SIZE];
 
             Keyboard_dump(&keyboard);
-            Keyboard_getHIDReportPayload(&keyboard, report, BLUETOOTH_REPORT_LEN);
+            Keyboard_getHIDReportPayload(&keyboard, hid_report);
 
             printf("  Report(");
-            for (uint8_t n = 0; n < BLUETOOTH_REPORT_LEN; n++) {
-                printf(" 0x%02X", report[n]);
+            for (uint8_t n = 0; n < HID_REPORT_SIZE; n++) {
+                printf(" 0x%02X", hid_report[n]);
             }
             printf(" )\n");
 
-            send_report_array(0, report);
+            send_hid_report(hid_report);
         }
 
         tight_loop_contents();

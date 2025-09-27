@@ -31,7 +31,7 @@ void    Keyboard_press(t_keyboard *ctx, uint8_t ascii_key)
 
 void    Keyboard_release(t_keyboard *ctx, uint8_t ascii_key)
 {
-#ifdef TRIM_KEY
+#ifdef TRIM_KEY_LEFT
     uint8_t n = 0;
 
     while (true) {
@@ -59,7 +59,7 @@ void    Keyboard_release(t_keyboard *ctx, uint8_t ascii_key)
             ctx->pressedKey[n] = 0;
         }
     }
-#endif /*TRIM_KEY*/
+#endif /*TRIM_KEY_LEFT*/
 
 ctx->changed = true;
 }
@@ -105,16 +105,19 @@ static bool my_lookup_keycode(uint8_t character, const uint8_t *table, int size,
     return false;
 }
 
-void    Keyboard_getHIDReportPayload(t_keyboard *ctx, uint8_t *report, size_t report_size)
+/*
+ * HID report
+ * 8 bytes: [MODIFIER] [RESERVED] [KEY1] [KEY2] [KEY3] [KEY4] [KEY5] [KEY6]
+ */
+
+ void    Keyboard_getHIDReportPayload(t_keyboard *ctx, uint8_t *hid_report)
 {
     uint8_t input_idx = 0;
     uint8_t report_idx = 0;
 
-    memset(report, 0, sizeof(uint8_t) * report_size);
+    memset(hid_report, 0, sizeof(uint8_t) * HID_REPORT_SIZE);
 
-    for (input_idx = 0;
-         (input_idx < MAX_SIMULTANEOUS_KEY) && (input_idx < report_size);
-         input_idx++) {
+    for (input_idx = 0; input_idx < MAX_SIMULTANEOUS_KEY; input_idx++) {
 
         if (ctx->pressedKey[input_idx] != 0) {
 
@@ -122,7 +125,7 @@ void    Keyboard_getHIDReportPayload(t_keyboard *ctx, uint8_t *report, size_t re
 
             if (my_lookup_keycode(ctx->pressedKey[input_idx], ctx->keytable, ctx->keytable_size, &keycode)) {
 
-                report[report_idx] = keycode;
+                hid_report[report_idx+2] = keycode;
                 report_idx++;
             }
         }
