@@ -14,14 +14,14 @@ project(my_project)
 pico_sdk_init()
 
 # rest of your project
-add_executable(picoquestpinball
-    main.c
-    button.c
-    keyboard.c
+add_executable(firmware
+    firmware/main.c
+    firmware/button.c
+    firmware/keyboard.c
 )
 
 # Add pico-sdk library which aggregates commonly used features
-target_link_libraries(picoquestpinball
+target_link_libraries(firmware
     pico_stdlib
     pico_util
     pico_cyw43_arch_none
@@ -29,12 +29,13 @@ target_link_libraries(picoquestpinball
     pico_btstack_classic
 )
 
-target_include_directories(picoquestpinball PRIVATE
+target_include_directories(firmware PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/firmware
 )
 
-pico_enable_stdio_usb(picoquestpinball 1)
-pico_enable_stdio_uart(picoquestpinball 0)
+pico_enable_stdio_usb(firmware 1)
+pico_enable_stdio_uart(firmware 0)
 
 # create map/bin/hex/uf2 file in addition to ELF.
-pico_add_extra_outputs(picoquestpinball)
+pico_add_extra_outputs(firmware)

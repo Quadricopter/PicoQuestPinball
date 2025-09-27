@@ -27,7 +27,7 @@ Itself based on BTstack HID keyboard demo [https://github.com/bluekitchen/btstac
 - Nudge left : ` d ` key
 - Nudge right : ` f ` key
   
-Default Pico W GPIO pinout (see [board.h](board.h) file)
+Default Pico W GPIO pinout (see [board.h](firmware/board.h) file)
 - Left flipper : 2
 - Right flipper : 3
 - Launch ball : 4
