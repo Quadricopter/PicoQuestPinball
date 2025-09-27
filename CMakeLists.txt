@@ -18,6 +18,7 @@ add_executable(firmware
     firmware/main.c
     firmware/button.c
     firmware/keyboard.c
+    firmware/hid_keyboard_demo.c
 )
 
 # Add pico-sdk library which aggregates commonly used features

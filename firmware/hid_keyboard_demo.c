@@ -52,6 +52,7 @@
 #include <inttypes.h>
 
 #include "btstack.h"
+#include "hid_keyboard_demo.h"
 
 // timing of keypresses
 #define TYPING_KEYDOWN_MS  20
@@ -218,6 +219,28 @@ static bool keycode_and_modifer_us_for_character(uint8_t character, uint8_t * ke
     return false;
 }
 
+const uint8_t *get_keytable_us_none(size_t *size)
+{
+    if (size) {
+        *size = sizeof(keytable_us_none);
+        return keytable_us_none;
+    }
+
+    return NULL;
+}
+
+void send_report_array(int modifier, uint8_t *keycode_array)
+{
+    uint8_t message[] = {0xa1, REPORT_ID, modifier, 0, keycode_array[0],
+                                                       keycode_array[1],
+                                                       keycode_array[2],
+                                                       keycode_array[3],
+                                                       keycode_array[4],
+                                                       keycode_array[5]};
+
+    hid_device_send_interrupt_message(hid_cid, &message[0], sizeof(message));
+}
+
 static void send_report(int modifier, int keycode){
     // setup HID message: A1 = Input Report, Report ID, Payload
     uint8_t message[] = {0xa1, REPORT_ID, modifier, 0, keycode, 0, 0, 0, 0, 0};
@@ -330,7 +353,6 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t * pack
 
 /* LISTING_START(MainConfiguration): Setup HID Device */
 
-int btstack_main(int argc, const char * argv[]);
 int btstack_main(int argc, const char * argv[]){
     (void)argc;
     (void)argv;

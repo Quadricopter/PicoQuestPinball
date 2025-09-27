@@ -1,29 +1,14 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "pico/cyw43_arch.h"
-#include "hid_keyboard_demo.c"  // FIXME: .c/.h
+
+#include "btstack.h"
+#include "hid_keyboard_demo.h"
 
 #include "board.h"
 #include "button.h"
 #include "keyboard.h"
 
-//#include "btstack.h"
-//#define REPORT_ID 0x01
-//extern uint16_t hid_cid;
-//int btstack_main(int argc, const char *argv[]);
-
-
-void send_report_array(int modifier, uint8_t *keycode_array)
-{
-    uint8_t message[] = {0xa1, REPORT_ID, modifier, 0, keycode_array[0],
-                                                       keycode_array[1],
-                                                       keycode_array[2],
-                                                       keycode_array[3],
-                                                       keycode_array[4],
-                                                       keycode_array[5]};
-
-    hid_device_send_interrupt_message(hid_cid, &message[0], sizeof(message));
-}
 
 /*
  * Entry point
@@ -44,8 +29,12 @@ int main(void)
     }
 
     /* Virtual keyboard */
+    const uint8_t *keytable_us_none = NULL;
+    size_t keytable_us_none_size = 0;
+
+    keytable_us_none = get_keytable_us_none(&keytable_us_none_size);
     Keyboard_init(&keyboard);
-    Keyboard_setKeyTable(&keyboard, keytable_us_none, sizeof(keytable_us_none));
+    Keyboard_setKeyTable(&keyboard, keytable_us_none, keytable_us_none_size);
 
     /* Init Buttons */
     t_button_map    button_map[] = {
