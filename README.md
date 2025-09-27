@@ -11,8 +11,8 @@ For USB usage, please have a look at incredible [PinscapePico](https://github.co
 [Raspberry Pi Pico SDK](https://github.com/raspberrypi/pico-sdk)  
 [BlueKitchen's BTstack](https://github.com/bluekitchen/btstack)  
 
-Project is based on BTstack HID keyboard demo:
-[https://github.com/bluekitchen/btstack/blob/master/example/hid_keyboard_demo.c](https://github.com/bluekitchen/btstack/blob/master/example/hid_keyboard_demo.c)
+Project is based on [https://mcuapplab.blogspot.com/2023/06/raspberry-pi-pico-w-btstack-ep-4-hid.html](https://mcuapplab.blogspot.com/2023/06/raspberry-pi-pico-w-btstack-ep-4-hid.html)  
+Itself based on BTstack HID keyboard demo [https://github.com/bluekitchen/btstack/blob/master/example/hid_keyboard_demo.c](https://github.com/bluekitchen/btstack/blob/master/example/hid_keyboard_demo.c)
 
 ## Pinout
 

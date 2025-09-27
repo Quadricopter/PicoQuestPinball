@@ -39,11 +39,9 @@
  
 // *****************************************************************************
 /* EXAMPLE_START(hid_keyboard_demo): HID Keyboard Classic
- *
- * @text This HID Device example demonstrates how to implement
- * an HID keyboard. Without a HAVE_BTSTACK_STDIN, a fixed demo text is sent
- * If HAVE_BTSTACK_STDIN is defined, you can type from the terminal
- */
+- *
+- * @text This HID Device example demonstrates how to implement an HID keyboard.
+  */
 // *****************************************************************************
 
 
@@ -54,13 +52,6 @@
 #include <inttypes.h>
 
 #include "btstack.h"
-
-#ifdef HAVE_BTSTACK_STDIN
-#include "btstack_stdin.h"
-#endif
-
-// to enable demo text on POSIX systems
-// #undef HAVE_BTSTACK_STDIN
 
 // timing of keypresses
 #define TYPING_KEYDOWN_MS  20
@@ -194,11 +185,6 @@ static uint8_t                send_modifier;
 static uint8_t                send_keycode;
 static bool                   send_active;
 
-#ifdef HAVE_BTSTACK_STDIN
-static bd_addr_t device_addr;
-static const char * device_addr_string = "BC:EC:5D:E6:15:03";
-#endif
-
 static enum {
     APP_BOOTING,
     APP_NOT_CONNECTED,
@@ -266,66 +252,6 @@ static void send_next(btstack_timer_source_t * ts) {
     }
 }
 
-static void queue_character(char character){
-    btstack_ring_buffer_write(&send_buffer, (uint8_t *) &character, 1);
-    if (send_active == false) {
-        send_next(&send_timer);
-    }
-}
-
-// Demo Application
-
-#ifdef HAVE_BTSTACK_STDIN
-
-// On systems with STDIN, we can directly type on the console
-
-static void stdin_process(char character){
-    switch (app_state){
-        case APP_BOOTING:
-        case APP_CONNECTING:
-            // ignore
-            break;
-        case APP_CONNECTED:
-            // add char to send buffer
-            queue_character(character);
-            break;
-        case APP_NOT_CONNECTED:
-            printf("Connecting to %s...\n", bd_addr_to_str(device_addr));
-            hid_device_connect(device_addr, &hid_cid);
-            break;
-        default:
-            btstack_assert(false);
-            break;
-    }
-}
-#else
-
-// On embedded systems, send constant demo text
-
-#define TYPING_DEMO_PERIOD_MS 100
-
-static const char * demo_text = "\n\nHello World!\n\nThis is the BTstack HID Keyboard Demo running on an Embedded Device.\n\n";
-static int demo_pos;
-static btstack_timer_source_t demo_text_timer;
-
-static void demo_text_timer_handler(btstack_timer_source_t * ts){
-    UNUSED(ts);
-
-    // queue character
-    uint8_t character = demo_text[demo_pos++];
-    if (demo_text[demo_pos] == 0){
-        demo_pos = 0;
-    }
-    queue_character(character);
-
-    // set timer for next character
-    btstack_run_loop_set_timer_handler(&demo_text_timer, demo_text_timer_handler);
-    btstack_run_loop_set_timer(&demo_text_timer, TYPING_DEMO_PERIOD_MS);
-    btstack_run_loop_add_timer(&demo_text_timer);
-}
-
-#endif
-
 static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t * packet, uint16_t packet_size){
     UNUSED(channel);
     UNUSED(packet_size);
@@ -357,12 +283,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t * pack
                             }
                             app_state = APP_CONNECTED;
                             hid_cid = hid_subevent_connection_opened_get_hid_cid(packet);
-#ifdef HAVE_BTSTACK_STDIN                        
-                            printf("HID Connected, please start typing...\n");
-#else                        
-                            printf("HID Connected, sending demo text...\n");
-                            demo_text_timer_handler(NULL);
-#endif
+                            printf("HID Connected\n");
                             break;
                         case HID_SUBEVENT_CONNECTION_CLOSED:
                             btstack_run_loop_remove_timer(&send_timer);
@@ -371,6 +292,7 @@ static void packet_handler(uint8_t packet_type, uint16_t channel, uint8_t * pack
                             hid_cid = 0;
                             break;
                         case HID_SUBEVENT_CAN_SEND_NOW:
+                            printf("HID send now: %d\n", send_keycode);
                             if (send_keycode){
                                 send_report(send_modifier, send_keycode);
                                 // schedule key up
@@ -473,11 +395,6 @@ int btstack_main(int argc, const char * argv[]){
 
     // register for HID events
     hid_device_register_packet_handler(&packet_handler);
-
-#ifdef HAVE_BTSTACK_STDIN
-    sscanf_bd_addr(device_addr_string, device_addr);
-    btstack_stdin_setup(stdin_process);
-#endif
 
     btstack_ring_buffer_init(&send_buffer, send_buffer_storage, sizeof(send_buffer_storage));
 
