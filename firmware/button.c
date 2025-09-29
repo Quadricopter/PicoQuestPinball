@@ -73,7 +73,7 @@ void vTaskButton(void *pvParameters)
             }
         }
 
-        xTaskDelayUntil(&previousWakeTime, 1);
+        xTaskDelayUntil(&previousWakeTime, pdMS_TO_TICKS(1));
     }
 
     vTaskDelete(NULL);

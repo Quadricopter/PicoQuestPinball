@@ -73,7 +73,7 @@ void vTaskMain(void *pvParameters)
 
         tight_loop_contents();
 
-        xTaskDelayUntil(&previousWakeTime, 1);
+        xTaskDelayUntil(&previousWakeTime, pdMS_TO_TICKS(1));
     }
 
     vTaskDelete(NULL);
@@ -85,6 +85,8 @@ void vTaskMain(void *pvParameters)
 
 int main(void)
 {
+    TaskHandle_t    xTask;
+
     /* Init Pico */
     stdio_init_all();
     if (cyw43_arch_init()) {
@@ -93,8 +95,9 @@ int main(void)
         return 0;
     }
 
-    /* Init FreeRTOS task */
-    xTaskCreate(vTaskMain, "main", configMINIMAL_STACK_SIZE, NULL, 0, NULL);
+    /* FreeRTOS main task */
+    xTaskCreate(vTaskMain, "main", configMINIMAL_STACK_SIZE, NULL, 0, &xTask);
+    vTaskCoreAffinitySet(xTask, 1);     // assertion "get_core_num() == async_context_core_num(cyw43_async_context)" failed
 
     /* Run FreeRTOS scheduler */
     vTaskStartScheduler();

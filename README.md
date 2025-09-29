@@ -47,11 +47,11 @@ git submodule update --init
 cd ../..
 ```
 
-Get [FreeRTOS](https://github.com/FreeRTOS/FreeRTOS-Kernel) sources
+Get [FreeRTOS](https://github.com/raspberrypi/FreeRTOS-Kernel) sources
 
 ```shell
 cd modules
-git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+git clone https://github.com/raspberrypi/FreeRTOS-Kernel.git
 cd FreeRTOS-Kernel
 git submodule update --init
 cd ../..
@@ -62,14 +62,14 @@ cd ../..
 `Pico W`
 
 ```shell
-cmake -S . -B build -DPICO_PLATFORM=rp2040 -DPICO_BOARD=pico_w
+cmake -S . -B build -DPICO_BOARD=pico_w
 cmake --build build
 ```
 
 `Pico 2 W`
 
 ```shell
-cmake -S . -B build -DPICO_PLATFORM=rp2350 -DPICO_BOARD=pico2_w
+cmake -S . -B build -DPICO_BOARD=pico2_w
 cmake --build build
 ```
 
@@ -81,7 +81,6 @@ For  `Pico W`
 
 ```json
     "cmake.configureSettings": {
-        "PICO_PLATFORM": "rp2040",
         "PICO_BOARD": "pico_w"
     }
 ```
@@ -90,7 +89,6 @@ For `Pico 2 W`
 
 ```json
     "cmake.configureSettings": {
-        "PICO_PLATFORM": "rp2350",
         "PICO_BOARD": "pico2_w"
     }
 ```
