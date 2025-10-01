@@ -6,10 +6,13 @@ Bluetooth controller for [Pinball FX VR](https://www.meta.com/fr-fr/experiences/
 PicoQuestPinball is a simple *"why not"* / *"proof of concept"*, for **evaluation** and **non-commercial-use**.  
 For USB usage, please have a look at incredible [PinscapePico](https://github.com/mjrgh/PinscapePico) project.
 
-## Reference
+# Third-party
 
 [Raspberry Pi Pico SDK](https://github.com/raspberrypi/pico-sdk)  
 [BlueKitchen's BTstack](https://github.com/bluekitchen/btstack)  
+[FreeRTOS](https://github.com/FreeRTOS/FreeRTOS-Kernel)
+
+## Reference
 
 Project is based on [https://mcuapplab.blogspot.com/2023/06/raspberry-pi-pico-w-btstack-ep-4-hid.html](https://mcuapplab.blogspot.com/2023/06/raspberry-pi-pico-w-btstack-ep-4-hid.html)  
 Itself based on BTstack HID keyboard demo [https://github.com/bluekitchen/btstack/blob/master/example/hid_keyboard_demo.c](https://github.com/bluekitchen/btstack/blob/master/example/hid_keyboard_demo.c)
@@ -20,10 +23,9 @@ Itself based on BTstack HID keyboard demo [https://github.com/bluekitchen/btstac
 - Left flipper : ` u ` key
 - Right flipper : ` 6 ` key
 - Launch ball :  ` 8 ` key
-- Menu :  ` 5 ` key
+- Menu :  ` i ` key
 
-- Nudge up : ` a ` key
-- Nudge down : ` s ` key
+- Nudge up : ` s ` key ( still didn't understood difference with ` a ` key.. )
 - Nudge left : ` d ` key
 - Nudge right : ` f ` key
   
@@ -41,6 +43,16 @@ Get [pico-sdk](https://github.com/raspberrypi/pico-sdk) sources
 cd modules
 git clone https://github.com/raspberrypi/pico-sdk.git
 cd pico-sdk
+git submodule update --init
+cd ../..
+```
+
+Get [FreeRTOS](https://github.com/FreeRTOS/FreeRTOS-Kernel) sources
+
+```shell
+cd modules
+git clone https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+cd FreeRTOS-Kernel
 git submodule update --init
 cd ../..
 ```

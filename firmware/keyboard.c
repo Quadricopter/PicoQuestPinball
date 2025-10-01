@@ -61,7 +61,7 @@ void    Keyboard_release(t_keyboard *ctx, uint8_t ascii_key)
     }
 #endif /*TRIM_KEY_LEFT*/
 
-ctx->changed = true;
+    ctx->changed = true;
 }
 
 void    Keyboard_releaseAll(t_keyboard *ctx)
@@ -130,6 +130,12 @@ static bool my_lookup_keycode(uint8_t character, const uint8_t *table, int size,
             }
         }
     }
+
+//    printf("  Report(");
+//    for (uint8_t n = 0; n < HID_REPORT_SIZE; n++) {
+//        printf(" 0x%02X", hid_report[n]);
+//    }
+//    printf(" )\n");
 
     ctx->changed = false;
 }

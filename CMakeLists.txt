@@ -7,17 +7,22 @@ set(PICO_SDK_PATH ../modules/pico-sdk)
 # initialize the SDK based on PICO_SDK_PATH
 # note: this must happen before project()
 include(modules/pico-sdk/external/pico_sdk_import.cmake)
+include(modules/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
 project(my_project)
 
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+# FreeRTOS
+# add_definitions(-DFREE_RTOS_KERNEL_SMP)
+
 # rest of your project
 add_executable(firmware
     firmware/main.c
     firmware/button.c
     firmware/keyboard.c
+    firmware/nudge.c
     firmware/hid_keyboard_demo.c
 )
 
@@ -28,6 +33,8 @@ target_link_libraries(firmware
     pico_cyw43_arch_none
     pico_btstack_cyw43
     pico_btstack_classic
+    FreeRTOS-Kernel
+    FreeRTOS-Kernel-Heap4
 )
 
 target_include_directories(firmware PRIVATE

@@ -1,43 +1,80 @@
 #include <stdio.h>
+#include "pico/stdlib.h"
 #include <string.h>
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
 #include "button.h"
+#include "board.h"
+#include "keyboard.h"
 
 /*
  *
  */
 
-void    Button_init(t_button *ctx, const t_button_map *map, uint8_t count)
+#define BUTTON_MAP_COUNT    4
+
+t_button_map    button_map[BUTTON_MAP_COUNT] = {
+
+    { LEFT_FLIP_BUTTON_PIN,  LEFT_FLIP_BUTTON_ASCII  },
+    { RIGHT_FLIP_BUTTON_PIN, RIGHT_FLIP_BUTTON_ASCII },
+    { LAUNCH_BUTTON_PIN,     LAUNCH_BUTTON_ASCII     },
+    { MENU_BUTTON_PIN,       MENU_BUTTON_ASCII       }
+};
+
+/*
+ *
+ */
+
+void vTaskButton(void *pvParameters)
 {
-    memset(ctx, 0, sizeof(t_button));
-    ctx->map = (t_button_map*) map;
-    ctx->count = count;
+    TickType_t          previousWakeTime = 0;
+    t_keyboard_event    event;
+    QueueHandle_t       keyInputQueue = (QueueHandle_t) pvParameters;
+    uint32_t            pressed_flags;
 
-    for (uint8_t n = 0; n < ctx->count; n++) {
+    /* Init Buttons */
+    for (uint8_t n = 0; n < BUTTON_MAP_COUNT; n++) {
 
-        gpio_init(ctx->map[n].gpio_in);
-        gpio_pull_up(ctx->map[n].gpio_in);
+        gpio_init(button_map[n].gpio_in);
+        gpio_pull_up(button_map[n].gpio_in);
     }
-}
 
-void    Button_pool(t_button *ctx, t_keyboard *keyboard)
-{
-    for (uint8_t n = 0; n < ctx->count; n++) {
+    /* Poll button(s) forever */
+    while (true) {
 
-        if (!gpio_get(ctx->map[n].gpio_in)) {
+        for (uint8_t n = 0; n < BUTTON_MAP_COUNT; n++) {
 
-            if (!(ctx->pressed_flags & (1 << n))) {
+            if (!gpio_get(button_map[n].gpio_in)) {
 
-                Keyboard_press(keyboard, ctx->map[n].ascii_out);
-                ctx->pressed_flags |= (1 << n);
+                if (!(pressed_flags & (1 << n))) {
+
+                    /* Send key event in queue */
+                    event.type = KEY_PRESS;
+                    event.ascii_key = button_map[n].ascii_out;
+                    xQueueSendToBack(keyInputQueue, &event, 1);
+
+                    pressed_flags |= (1 << n);
+                }
+            }
+            else {
+
+                if (pressed_flags & (1 << n)) {
+
+                    /* Send key event in queue */
+                    event.type = KEY_RELEASE;
+                    event.ascii_key = button_map[n].ascii_out;
+                    xQueueSendToBack(keyInputQueue, &event, 1);
+
+                    pressed_flags &= ~(1 << n);
+                }
             }
         }
-        else {
 
-            if (ctx->pressed_flags & (1 << n)) {
-
-                Keyboard_release(keyboard, ctx->map[n].ascii_out);
-                ctx->pressed_flags &= ~(1 << n);
-            }
-        }
+        xTaskDelayUntil(&previousWakeTime, 1);
     }
+
+    vTaskDelete(NULL);
 }

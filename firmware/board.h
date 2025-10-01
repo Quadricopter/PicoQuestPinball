@@ -19,5 +19,10 @@
 #define LAUNCH_BUTTON_ASCII     '8'
 #define MENU_BUTTON_ASCII       'i'
 
+/*
+ * FreeRTOS
+ */
+
+#define EVENT_QUEUE_LENGTH      8
 
 #endif /*__BOARD_H__*/

@@ -10,6 +10,18 @@
 #define MAX_SIMULTANEOUS_KEY    (HID_REPORT_SIZE - 2)
 #define TRIM_KEY_LEFT
 
+typedef enum {
+
+    KEY_RELEASE = 0,
+    KEY_PRESS
+}   e_key_type;
+
+typedef struct {
+
+    e_key_type  type;
+    uint8_t     ascii_key;
+}   t_keyboard_event;
+
 typedef struct {
 
     uint8_t pressedKey[MAX_SIMULTANEOUS_KEY];
