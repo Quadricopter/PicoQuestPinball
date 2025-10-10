@@ -37,6 +37,12 @@ Default Pico W GPIO pinout (see [board.h](firmware/board.h) file)
 
 ## Build
 
+If you don't use `pico-sdk` and/or `FreeRTOS-Kernel` for another project, I suggest you retrieve them in a `modules` subdirectory
+
+```shell
+mkdir modules
+```
+
 Get [pico-sdk](https://github.com/raspberrypi/pico-sdk) sources  
 
 ```shell
@@ -62,14 +68,14 @@ cd ../..
 `Pico W`
 
 ```shell
-cmake -S . -B build -DPICO_BOARD=pico_w
+cmake -S . -B build -DPICO_BOARD=pico_w -DPICO_SDK_PATH=modules/pico-sdk -DFREERTOS_KERNEL_PATH=modules/FreeRTOS-Kernel
 cmake --build build
 ```
 
 `Pico 2 W`
 
 ```shell
-cmake -S . -B build -DPICO_BOARD=pico2_w
+cmake -S . -B build -DPICO_BOARD=pico2_w -DPICO_SDK_PATH=modules/pico-sdk -DFREERTOS_KERNEL_PATH=modules/FreeRTOS-Kernel
 cmake --build build
 ```
 
@@ -81,7 +87,9 @@ For  `Pico W`
 
 ```json
     "cmake.configureSettings": {
-        "PICO_BOARD": "pico_w"
+        "PICO_BOARD": "pico_w",
+        "PICO_SDK_PATH": "${workspaceFolder}/modules/pico-sdk",
+        "FREERTOS_KERNEL_PATH": "${workspaceFolder}/modules/FreeRTOS-Kernel"
     }
 ```
 
@@ -89,7 +97,9 @@ For `Pico 2 W`
 
 ```json
     "cmake.configureSettings": {
-        "PICO_BOARD": "pico2_w"
+        "PICO_BOARD": "pico2_w",
+        "PICO_SDK_PATH": "${workspaceFolder}/modules/pico-sdk",
+        "FREERTOS_KERNEL_PATH": "${workspaceFolder}/modules/FreeRTOS-Kernel"
     }
 ```
 

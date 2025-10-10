@@ -2,16 +2,23 @@ set(PICO_BOARD pico_w CACHE STRING "Board type")
 
 cmake_minimum_required(VERSION 3.13...3.27)
 
-set(PICO_SDK_PATH ../modules/pico-sdk)
+# Check "FreeRTOS-Kernel" path
+if (NOT FREERTOS_KERNEL_PATH)
+  message(FATAL_ERROR "FREERTOS_KERNEL_PATH not defined")
+endif()
+
+if (NOT EXISTS ${FREERTOS_KERNEL_PATH})
+  message(FATAL_ERROR "${FREERTOS_KERNEL_PATH} not exists")
+endif()
 
 # initialize the SDK based on PICO_SDK_PATH
 # note: this must happen before project()
-include(modules/pico-sdk/external/pico_sdk_import.cmake)
+include(firmware/pico_sdk_import.cmake)
 
 if (${PICO_BOARD} STREQUAL "pico_w")
-  include(modules/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
+  include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 elseif (${PICO_BOARD} STREQUAL "pico2_w")
-  include(modules/FreeRTOS-Kernel/portable/ThirdParty/GCC/RP2350_ARM_NTZ/FreeRTOS_Kernel_import.cmake)
+  include(${FREERTOS_KERNEL_PATH}/portable/ThirdParty/GCC/RP2350_ARM_NTZ/FreeRTOS_Kernel_import.cmake)
 else ()
   message(FATAL_ERROR "Unsupported board ${PICO_BOARD}")
 endif()
